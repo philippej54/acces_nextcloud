@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Contenu 2 de Nextcloud</title>
+    <title> Affichage répertoire Nextcloud</title>
     <script>
         async function afficherContenu() {
             try {
@@ -14,7 +14,7 @@
                     document.getElementById("nextcloud-content").innerText = "Impossible de charger le contenu.";
                 }
             } catch (error) {
-                document.getElementById("nextcloud-content").innerText = "Erreur lors du chargement.";
+                document.getElementById("nextcloud-content").innerText = "Erreur lors du chargement - NextCloud non diponible.";
             }
         }
         window.onload = afficherContenu;
