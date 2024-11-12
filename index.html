@@ -3,10 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Contenu de Nextcloud</title>
+    <script>
+        async function afficherContenu() {
+            try {
+                const response = await fetch("https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B/download"); // URL du lien pour télécharger
+                if (response.ok) {
+                    const text = await response.text();
+                    document.getElementById("nextcloud-content").innerText = text;
+                } else {
+                    document.getElementById("nextcloud-content").innerText = "Impossible de charger le contenu.";
+                }
+            } catch (error) {
+                document.getElementById("nextcloud-content").innerText = "Erreur lors du chargement.";
+            }
+        }
+        window.onload = afficherContenu;
+    </script>
 </head>
 <body>
     <h1>Bonjour</h1>
     <h2>Contenu de "traitement d'images"</h2>
-    <iframe src="https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B" width="100%" height="600px"></iframe>
+    <div id="nextcloud-content">Chargement...</div>
 </body>
 </html>
