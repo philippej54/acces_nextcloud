@@ -1,9 +1,37 @@
-// Ouvre la fenêtre
-let fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreNextCloud");
+<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
 
-// Ferme la fenêtre après un délai de 5 secondes (par exemple)
-setTimeout(() => {
-    if (fenetre && !fenetre.closed) {
-        fenetre.close();
+<a href="https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B" target="_blank" style="font-size: 4em;">Accéder au contenu "traitement d'images"</a>
+<br><br>
+
+<a href="https://nextcloud.inrae.fr/s/d6toGfTyxoDyGd4" target="_blank" style="font-size: 4em;">Déposer une image</a>
+<br><br>
+
+<a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 4em;">Consulter Status</a>
+
+<br><br><br>
+
+<a href="#" onclick="ouvrirFermer()" style="font-size: 4em;">Consulter Status (Ouvrir/Fermer)</a>
+
+<script>
+    let fenetre;
+
+    function ouvrirFermer() {
+        // Ouvre la fenêtre si elle n'existe pas ou est fermée
+        if (!fenetre || fenetre.closed) {
+            fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "_blank");
+        } else {
+            // Si la fenêtre est ouverte, la ferme et la rouvre après un délai
+            fenetre.close();
+            setTimeout(() => {
+                fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "_blank");
+            }, 1000); // Réouverture après 1 seconde
+        }
     }
-}, 5000); // Ferme la fenêtre après 5 secondes
+
+    // Ferme la fenêtre après un délai de 5 secondes (par exemple)
+    setTimeout(() => {
+        if (fenetre && !fenetre.closed) {
+            fenetre.close();
+        }
+    }, 5000); // Ferme la fenêtre après 5 secondes
+</script>
