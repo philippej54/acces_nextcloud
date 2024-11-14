@@ -17,12 +17,13 @@
 <script>
     let fenetre;
     let intervalleRafraichissement;
+    let timerVerification;
 
     function ouvrirEtRafraichir() {
         // Ouvre la fenêtre si elle est fermée
         if (!fenetre || fenetre.closed) {
             fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreStatus");
-            
+
             // Si un intervalle de rafraîchissement est déjà en cours, le nettoyer
             if (intervalleRafraichissement) {
                 clearInterval(intervalleRafraichissement);
@@ -37,6 +38,35 @@
                     clearInterval(intervalleRafraichissement);
                 }
             }, 2000);
+        }
+
+        // **auto check de modification de page** : Vérification de l'apparition du message d'expiration
+        if (fenetre) {
+            // Ajouter une petite attente pour que la fenêtre se charge correctement
+            fenetre.onload = function() {
+                const observer = new fenetre.MutationObserver(mutations => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'childList') {
+                            // Chercher un élément spécifique (exemple ici avec une classe générique)
+                            const messageElement = fenetre.document.querySelector('.session-expiree'); // Remplacer avec la classe réelle
+                            if (messageElement && messageElement.innerText.includes("La session de modification a expiré")) {
+                                // Recharger la page automatiquement
+                                fenetre.location.reload();
+                                observer.disconnect(); // Arrêter l'observateur après rechargement
+                            }
+                        }
+                    });
+                });
+
+                // Observer les changements dans le DOM, par exemple les ajouts dans le body
+                observer.observe(fenetre.document.body, { childList: true, subtree: true });
+
+                // Arrêter l'observateur après 3 minutes (180 secondes)
+                timerVerification = setTimeout(() => {
+                    observer.disconnect(); // Arrêter l'observateur après 3 minutes
+                    console.log("Vérification arrêtée après 3 minutes.");
+                }, 180000); // 3 minutes en millisecondes
+            };
         }
     }
 </script>
