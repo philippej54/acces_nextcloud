@@ -8,7 +8,8 @@
 
 <a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 4em;">Consulter Status</a>
 
-<br><br>
+<br><br><br>
+<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
 
 <a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 4em;">Consulter Status</a>
 
@@ -35,6 +36,20 @@
                     clearInterval(intervalleRafraichissement);
                 }
             }, 2000);
+        }
+        
+        // Ajouter un observateur pour détecter l'apparition du message d'expiration
+        if (fenetre) {
+            fenetre.onload = function() {
+                let intervalCheck = setInterval(() => {
+                    // Vérifier si le message d'expiration de session est présent
+                    if (fenetre.document.body.innerText.includes("La session de modification a expiré")) {
+                        // Recharger la page automatiquement
+                        fenetre.location.reload();
+                        clearInterval(intervalCheck); // Arrêter la vérification après rechargement
+                    }
+                }, 1000); // Vérifier chaque seconde
+            }
         }
     }
 </script>
