@@ -9,7 +9,7 @@
 <a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 4em;">Consulter Status</a>
 
 <br><br><br>
-<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
+
 
 <a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 4em;">Consulter Status</a>
 
@@ -21,7 +21,7 @@
         // Ouvre la fenêtre si elle est fermée
         if (!fenetre || fenetre.closed) {
             fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreStatus");
-            
+
             // Si un intervalle de rafraîchissement est déjà en cours, le nettoyer
             if (intervalleRafraichissement) {
                 clearInterval(intervalleRafraichissement);
@@ -40,16 +40,22 @@
         
         // Ajouter un observateur pour détecter l'apparition du message d'expiration
         if (fenetre) {
-            fenetre.onload = function() {
-                let intervalCheck = setInterval(() => {
-                    // Vérifier si le message d'expiration de session est présent
-                    if (fenetre.document.body.innerText.includes("La session de modification a expiré")) {
-                        // Recharger la page automatiquement
-                        fenetre.location.reload();
-                        clearInterval(intervalCheck); // Arrêter la vérification après rechargement
+            // Utiliser MutationObserver pour surveiller les changements dans le DOM
+            const observer = new fenetre.MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.type === 'childList') {
+                        // Vérifie si le message d'expiration est présent
+                        if (fenetre.document.body.innerText.includes("La session de modification a expiré")) {
+                            // Recharger la page automatiquement
+                            fenetre.location.reload();
+                            observer.disconnect(); // Arrêter l'observateur après rechargement
+                        }
                     }
-                }, 1000); // Vérifier chaque seconde
-            }
+                });
+            });
+
+            // Observer la page pour détecter l'ajout de nouveaux éléments
+            observer.observe(fenetre.document.body, { childList: true, subtree: true });
         }
     }
 </script>
