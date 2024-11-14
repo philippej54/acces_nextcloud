@@ -10,6 +10,7 @@
 
 <br><br><br>
 
+<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
 
 <a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 4em;">Consulter Status</a>
 
@@ -40,22 +41,26 @@
         
         // Ajouter un observateur pour détecter l'apparition du message d'expiration
         if (fenetre) {
-            // Utiliser MutationObserver pour surveiller les changements dans le DOM
-            const observer = new fenetre.MutationObserver(mutations => {
-                mutations.forEach(mutation => {
-                    if (mutation.type === 'childList') {
-                        // Vérifie si le message d'expiration est présent
-                        if (fenetre.document.body.innerText.includes("La session de modification a expiré")) {
-                            // Recharger la page automatiquement
-                            fenetre.location.reload();
-                            observer.disconnect(); // Arrêter l'observateur après rechargement
+            // Ajouter une petite attente pour que la fenêtre se charge correctement
+            fenetre.onload = function() {
+                // Détecter un élément spécifique dans le DOM qui contient le message d'expiration
+                const observer = new fenetre.MutationObserver(mutations => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'childList') {
+                            // Chercher un élément spécifique, par exemple un div avec une classe particulière
+                            const messageElement = fenetre.document.querySelector('.session-expiree'); // Remplace ceci par la classe réelle
+                            if (messageElement && messageElement.innerText.includes("La session de modification a expiré")) {
+                                // Recharger la page automatiquement
+                                fenetre.location.reload();
+                                observer.disconnect(); // Arrêter l'observateur après rechargement
+                            }
                         }
-                    }
+                    });
                 });
-            });
 
-            // Observer la page pour détecter l'ajout de nouveaux éléments
-            observer.observe(fenetre.document.body, { childList: true, subtree: true });
+                // Observer les changements dans le DOM, par exemple les ajouts dans le body
+                observer.observe(fenetre.document.body, { childList: true, subtree: true });
+            };
         }
     }
 </script>
