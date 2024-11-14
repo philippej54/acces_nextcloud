@@ -1,72 +1,9 @@
-<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
+// Ouvre la fenêtre
+let fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreNextCloud");
 
-<a href="https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B" target="_blank" style="font-size: 4em;">Accéder au contenu "traitement d'images"</a>
-<br><br>
-
-<a href="https://nextcloud.inrae.fr/s/d6toGfTyxoDyGd4" target="_blank" style="font-size: 4em;">Déposer une image</a>
-<br><br>
-
-<a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 4em;">Consulter Status</a>
-
-<br><br><br>
-
-<h1 style="font-size: 5em;">Accès NextCloud INRAE</h1>
-
-<a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 4em;">Consulter Status</a>
-
-<script>
-    let fenetre;
-    let intervalleRafraichissement;
-    let timerVerification;
-
-    function ouvrirEtRafraichir() {
-        // Ouvre la fenêtre si elle est fermée
-        if (!fenetre || fenetre.closed) {
-            fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreStatus");
-
-            // Si un intervalle de rafraîchissement est déjà en cours, le nettoyer
-            if (intervalleRafraichissement) {
-                clearInterval(intervalleRafraichissement);
-            }
-
-            // Définir un intervalle pour rafraîchir la fenêtre toutes les 2 secondes
-            intervalleRafraichissement = setInterval(() => {
-                if (fenetre && !fenetre.closed) {
-                    fenetre.location.reload();
-                } else {
-                    // Si la fenêtre est fermée, arrête le rafraîchissement
-                    clearInterval(intervalleRafraichissement);
-                }
-            }, 2000);
-        }
-
-        // **auto check de modification de page** : Vérification de l'apparition du message d'expiration
-        if (fenetre) {
-            // Ajouter une petite attente pour que la fenêtre se charge correctement
-            fenetre.onload = function() {
-                const observer = new fenetre.MutationObserver(mutations => {
-                    mutations.forEach(mutation => {
-                        if (mutation.type === 'childList') {
-                            // Chercher un élément spécifique (exemple ici avec une classe générique)
-                            const messageElement = fenetre.document.querySelector('.session-expiree'); // Remplacer avec la classe réelle
-                            if (messageElement && messageElement.innerText.includes("La session de modification a expiré")) {
-                                // Recharger la page automatiquement
-                                fenetre.location.reload();
-                                observer.disconnect(); // Arrêter l'observateur après rechargement
-                            }
-                        }
-                    });
-                });
-
-                // Observer les changements dans le DOM, par exemple les ajouts dans le body
-                observer.observe(fenetre.document.body, { childList: true, subtree: true });
-
-                // Arrêter l'observateur après 3 minutes (180 secondes)
-                timerVerification = setTimeout(() => {
-                    observer.disconnect(); // Arrêter l'observateur après 3 minutes
-                    console.log("Vérification arrêtée après 3 minutes.");
-                }, 180000); // 3 minutes en millisecondes
-            };
-        }
+// Ferme la fenêtre après un délai de 5 secondes (par exemple)
+setTimeout(() => {
+    if (fenetre && !fenetre.closed) {
+        fenetre.close();
     }
-</script>
+}, 5000); // Ferme la fenêtre après 5 secondes
