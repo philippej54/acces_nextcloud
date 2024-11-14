@@ -8,22 +8,33 @@
 
 <a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 4em;">Consulter Status</a>
 
+<br><br>
 
-<a href="#" onclick="ouvrirFermer()" style="font-size: 4em;">Consulter Status</a>
+<a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 4em;">Consulter Status</a>
 
 <script>
     let fenetre;
+    let intervalleRafraichissement;
 
-    function ouvrirFermer() {
-        // Ouvre la fenêtre si elle n'existe pas ou est fermée
+    function ouvrirEtRafraichir() {
+        // Ouvre la fenêtre si elle est fermée
         if (!fenetre || fenetre.closed) {
-            fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "_blank");
-        } else {
-            // Si la fenêtre est ouverte, la ferme et la rouvre après un délai
-            fenetre.close();
-            setTimeout(() => {
-                fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "_blank");
-            }, 1000); // Réouverture après 1 seconde
+            fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreStatus");
+            
+            // Si un intervalle de rafraîchissement est déjà en cours, le nettoyer
+            if (intervalleRafraichissement) {
+                clearInterval(intervalleRafraichissement);
+            }
+
+            // Définir un intervalle pour rafraîchir la fenêtre toutes les 2 secondes
+            intervalleRafraichissement = setInterval(() => {
+                if (fenetre && !fenetre.closed) {
+                    fenetre.location.reload();
+                } else {
+                    // Si la fenêtre est fermée, arrête le rafraîchissement
+                    clearInterval(intervalleRafraichissement);
+                }
+            }, 2000);
         }
     }
 </script>
