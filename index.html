@@ -1,51 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="manifest" href="manifest.json">
   <title>Mon Raccourci</title>
 </head>
+<body>
 
+  <h1 style="font-size: 2em;">Accès NextCloud INRAE</h1>
 
-<h1 style="font-size: 2em;">Accès NextCloud INRAE</h1>
+  <a href="https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B" target="_blank" style="font-size: 2em;">Accéder au contenu "traitement d'images"</a>
+  <br><br>
 
-<a href="https://nextcloud.inrae.fr/s/Ymsmq7p3gimDs7B" target="_blank" style="font-size: 2em;">Accéder au contenu "traitement d'images"</a>
-<br><br>
+  <a href="https://nextcloud.inrae.fr/s/d6toGfTyxoDyGd4" target="_blank" style="font-size: 2em;">Déposer une image</a>
+  <br><br>
 
-<a href="https://nextcloud.inrae.fr/s/d6toGfTyxoDyGd4" target="_blank" style="font-size: 2em;">Déposer une image</a>
-<br><br>
+  //<a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 2em;">Consulter Status</a>
+  //<br><br>
 
-<a href="https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE" target="_blank" style="font-size: 2em;">Consulter Status</a>
+  <a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 2em;">Consulter Status (auto-refresh)</a>
+  <br><br>
 
+  <!-- Le bouton d'installation pour la PWA -->
+  <button id="installBtn" style="font-size: 2em; display: none;">Installer l'application</button>
 
-
-
-<br><br><br>
-
-<a href="#" onclick="ouvrirEtRafraichir()" style="font-size: 2em;">Consulter Status (auto-refresh)</a>
-
-<script>
+  <!-- Script JavaScript pour gérer l'installation de la PWA -->
+  <script>
     let fenetre;
     let intervalleRafraichissement;
+    let deferredPrompt;
 
+    // Ouvre la fenêtre avec auto-refresh
     function ouvrirEtRafraichir() {
-        // Ouvre la fenêtre si elle est fermée
         if (!fenetre || fenetre.closed) {
             fenetre = window.open("https://nextcloud.inrae.fr/s/kGrzT26nZ9Y6FBE", "fenetreStatus");
             
-            // Si un intervalle de rafraîchissement est déjà en cours, le nettoyer
             if (intervalleRafraichissement) {
                 clearInterval(intervalleRafraichissement);
             }
 
-            // Définir un intervalle pour rafraîchir la fenêtre toutes les 2 secondes
             intervalleRafraichissement = setInterval(() => {
                 if (fenetre && !fenetre.closed) {
                     fenetre.location.reload();
                 } else {
-                    // Si la fenêtre est fermée, arrête le rafraîchissement
                     clearInterval(intervalleRafraichissement);
                 }
             }, 2000);
         }
     }
-</script>
+
+    // Gérer l'invite d'installation
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); // Empêche l'invite par défaut
+      deferredPrompt = e;
+
+      // Afficher le bouton d'installation
+      document.getElementById('installBtn').style.display = 'block';
+
+      // Ajouter un événement sur le bouton pour afficher l'invite
+      document.getElementById('installBtn').addEventListener('click', () => {
+        deferredPrompt.prompt(); // Affiche l'invite d'installation
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('L\'utilisateur a installé la PWA');
+          } else {
+            console.log('L\'utilisateur a rejeté l\'installation');
+          }
+          deferredPrompt = null; // Réinitialiser le prompt
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
